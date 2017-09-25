@@ -6,13 +6,13 @@
 // v, c, n e z -> flags da ULA
 // result -> resultado da operação executada
 
-module ula (clk, a, b, result, op, v, c, n, z); //Declaração das variáveis
+module ula (clk, a, b, result, op, zero); //Declaração das variáveis
 	input clk;
 	input [1:0] op;
 	input [1:0] a;
 	input [1:0] b;
 	output [1:0] result;
-	output v, c, n, z;
+	output logic zero;
 	reg [1:0] a;
 	reg [1:0] b;
 	reg [1:0] result;
@@ -27,6 +27,5 @@ case (op)                           //Seleção da operação desejada
 	default: result <= a | b; 
 
 endcase
-
 
 endmodule 
