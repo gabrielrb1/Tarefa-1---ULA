@@ -5,12 +5,12 @@
 module ula_tb; 
 reg clk;
 reg [1:0] op;
-reg [1:0] a;
-reg [1:0] b;
-wire [1:0] result;
-reg [7:0] teste [100:0];
+reg [31:0] a;
+reg [31:0] b;
+wire [31:0] result;
+logic [7:0] teste [3:0]; //Definição do tamannho do arquivo de teste
 reg i; //Definição da variável "i" para percorrer o vetor de teste
-reg [1:0] t_res; //Variável criada para receber o resultado esperado, proveniente do arquivo aberto
+reg [31:0] t_res; //Variável criada para receber o resultado esperado, proveniente do arquivo aberto
 
 
 ula U0(
@@ -26,8 +26,7 @@ ula U0(
 //Inicialização das variáveis de varredura err
 initial begin
 	clk = 0;
-	$readmemb("C:\intelFPGA_pro\17.0\Projeto1\Teste.txt", teste);
-	i = 0;
+	$readmemb("Teste.txt", teste);
 	
 end
 
@@ -43,24 +42,30 @@ end
 always @ (posedge clk) begin
 	#1;
 	{a, b, op, t_res} = teste[i];
-	
-end
-	
-always @ (negedge clk) begin
+
+	//Aguarda mais um passo, para garantir que o vetor do arquivo tenha sido devidamente lido
+	//Verifica então se houve algum erro entre a saída esperada e a calculada
+	#1
 	if (result !==t_res) begin
-		$display ("Erro para entradas: %b", a,b);
+		$display ("Erro para entradas: %b e %b", a,b);
 		$display ("Saida esperada: %b; Saida obtida: %b", t_res, result);
 	end 
-	i = i+1;
-	if (i==8) begin
+	i = i + 1;
+	
+	//Determina um valor máximo para o índice i, limitando a quantidade de linhas a serem lidas
+	//no arquivo teste
+	
+	if (i==4) begin
 		$finish;
-	end
+	end	
 
 end
 
+
+//Imprime os resultados na tela para acompanhamento dos resultados
 initial begin
 	$display("a\tb\top\trestult\ti");
-	$monitor("%b,\t%b,\t%b,\t%b,\t%b,\t%d",$time,a,b,op,t_res,i);
+	$monitor("\t%b\t%b,\t%b,\t%b,\t%d",a,b,op,t_res,i);
 end
 
 
